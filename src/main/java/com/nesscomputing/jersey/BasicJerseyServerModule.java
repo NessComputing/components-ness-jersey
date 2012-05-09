@@ -2,15 +2,12 @@ package com.nesscomputing.jersey;
 
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
 import com.nesscomputing.config.Config;
-import com.nesscomputing.config.ConfigProvider;
 import com.nesscomputing.httpserver.selftest.SelftestModule;
 import com.nesscomputing.jdbi.argument.ArgumentFactoryModule;
 import com.nesscomputing.jdbi.metrics.DatabaseMetricsModule;
 import com.nesscomputing.jersey.exceptions.NessJerseyExceptionMapperModule;
 import com.nesscomputing.jersey.filter.BodySizeLimitResourceFilterFactory;
-import com.nesscomputing.jersey.filter.NessJerseyFiltersConfig;
 import com.nesscomputing.jersey.json.NessJacksonJsonProvider;
 import com.nesscomputing.jmx.starter.guice.JmxStarterModule;
 import com.sun.jersey.guice.JerseyServletModule;

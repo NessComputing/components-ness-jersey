@@ -79,12 +79,6 @@
 
     <dependency>
       <groupId>com.yammer.metrics</groupId>
-      <artifactId>metrics-core</artifactId>
-      <version>${dep.yammer.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.yammer.metrics</groupId>
       <artifactId>metrics-guice</artifactId>
       <version>${dep.yammer.version}</version>
     </dependency>
