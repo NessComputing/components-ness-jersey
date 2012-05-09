@@ -16,12 +16,6 @@
 package com.nesscomputing.jersey.wadl;
 
 import static org.junit.Assert.assertEquals;
-
-import ness.testing.IntegrationTestRule;
-import ness.testing.IntegrationTestRuleBuilder;
-import ness.testing.ServiceDefinition;
-import ness.testing.ServiceDefinitionBuilder;
-
 import nu.xom.Attribute;
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -38,6 +32,10 @@ import com.nesscomputing.httpclient.HttpClient;
 import com.nesscomputing.httpclient.response.StringContentConverter;
 import com.nesscomputing.httpclient.testing.CapturingHttpResponseHandler;
 import com.nesscomputing.httpserver.HttpServer;
+import com.nesscomputing.testing.IntegrationTestRule;
+import com.nesscomputing.testing.IntegrationTestRuleBuilder;
+import com.nesscomputing.testing.ServiceDefinition;
+import com.nesscomputing.testing.ServiceDefinitionBuilder;
 import com.nesscomputing.testing.lessio.AllowDNSResolution;
 import com.nesscomputing.testing.lessio.AllowNetworkAccess;
 

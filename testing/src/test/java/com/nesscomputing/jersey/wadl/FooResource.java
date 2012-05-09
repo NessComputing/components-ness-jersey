@@ -22,7 +22,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import com.nesscomputing.jersey.wadl.RequiresAuthentication;
 import com.nesscomputing.jersey.wadl.RequiresAuthentication.AuthenticationType;
 
 @Path("/foo")

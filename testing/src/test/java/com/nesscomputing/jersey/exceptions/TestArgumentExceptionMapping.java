@@ -24,11 +24,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import ness.testing.IntegrationTestRule;
-import ness.testing.IntegrationTestRuleBuilder;
-import ness.testing.ServiceDefinition;
-import ness.testing.ServiceDefinitionBuilder;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,7 +37,10 @@ import com.nesscomputing.httpclient.HttpClientResponse;
 import com.nesscomputing.httpclient.response.StringContentConverter;
 import com.nesscomputing.httpclient.testing.CapturingHttpResponseHandler;
 import com.nesscomputing.httpserver.HttpServer;
-import com.nesscomputing.jersey.exceptions.NessJerseyExceptionMapperModule;
+import com.nesscomputing.testing.IntegrationTestRule;
+import com.nesscomputing.testing.IntegrationTestRuleBuilder;
+import com.nesscomputing.testing.ServiceDefinition;
+import com.nesscomputing.testing.ServiceDefinitionBuilder;
 import com.nesscomputing.testing.lessio.AllowDNSResolution;
 import com.nesscomputing.testing.lessio.AllowNetworkAccess;
 

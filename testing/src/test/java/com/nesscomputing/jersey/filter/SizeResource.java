@@ -21,8 +21,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.nesscomputing.jersey.filter.BodySizeLimit;
-
 @BodySizeLimit(1024)
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
