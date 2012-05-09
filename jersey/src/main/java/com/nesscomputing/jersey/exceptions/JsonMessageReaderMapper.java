@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.MDC;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
