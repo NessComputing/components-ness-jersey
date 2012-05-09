@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>ness.maven</groupId>
+    <artifactId>base</artifactId>
+    <version>38-SNAPSHOT</version>
+  </parent>
+
+  <scm>
+    <connection>scm:hg:ssh://hg@hg.nessops.net/code/components/ness-jersey</connection>
+  </scm>
+
+  <groupId>ness.components</groupId>
+  <artifactId>ness-jersey</artifactId>
+  <name>ness-jersey</name>
+  <version>8.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <description>ness specific jersey glue code</description>
+
+  <properties>
+    <dep.jersey.version>1.12</dep.jersey.version>
+    <dep.jackson.version>1.9.7</dep.jackson.version>
+    <dep.yammer.version>2.1.2</dep.yammer.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-logging</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-config</artifactId>
+      <version>2.1.3</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-jdbi</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-jmx</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-httpserver</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-core</artifactId>
+      <version>${dep.jersey.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey.contribs</groupId>
+      <artifactId>jersey-guice</artifactId>
+      <version>${dep.jersey.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-server</artifactId>
+      <version>${dep.jersey.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.yammer.metrics</groupId>
+      <artifactId>metrics-core</artifactId>
+      <version>${dep.yammer.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.yammer.metrics</groupId>
+      <artifactId>metrics-guice</artifactId>
+      <version>${dep.yammer.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-servlet</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-multibindings</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+      <version>${dep.jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>${dep.jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-jaxrs</artifactId>
+      <version>${dep.jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.skife.config</groupId>
+      <artifactId>config-magic</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.16</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-integration-testing</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-httpclient</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-httpclient-testing</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Annotations used in the integration test builder -->
+    <dependency>
+      <groupId>com.nesscomputing.testing</groupId>
+      <artifactId>kawala-lessio</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>xom</groupId>
+      <artifactId>xom</artifactId>
+      <version>1.2.5</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit-dep</artifactId>
+      <!-- This is optional rather than test-scoped for the integration test builder, which integrates with JUnit -->
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+</project>

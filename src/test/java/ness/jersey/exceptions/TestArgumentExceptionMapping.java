@@ -1,0 +1,118 @@
+package ness.jersey.exceptions;
+
+import static org.junit.Assert.assertEquals;
+
+import java.net.URI;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+
+import ness.testing.IntegrationTestRule;
+import ness.testing.IntegrationTestRuleBuilder;
+import ness.testing.ServiceDefinition;
+import ness.testing.ServiceDefinitionBuilder;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Key;
+import com.nesscomputing.httpclient.HttpClient;
+import com.nesscomputing.httpclient.HttpClientResponse;
+import com.nesscomputing.httpclient.response.StringContentConverter;
+import com.nesscomputing.httpclient.testing.CapturingHttpResponseHandler;
+import com.nesscomputing.httpserver.HttpServer;
+import com.nesscomputing.testing.lessio.AllowDNSResolution;
+import com.nesscomputing.testing.lessio.AllowNetworkAccess;
+
+@AllowNetworkAccess(endpoints= {"127.0.0.1:*"})
+@AllowDNSResolution
+public class TestArgumentExceptionMapping {
+
+    private final ServiceDefinition testingService = new ServiceDefinitionBuilder().addModule(new AbstractModule() {
+        @Override
+        protected void configure() {
+            bind (BadResource.class);
+            install (new NessJerseyExceptionMapperModule());
+        }
+    }).build();
+
+    @Rule
+    public IntegrationTestRule rule = new IntegrationTestRuleBuilder()
+        .addService("testing", testingService).build(this, new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind (BadResource.class);
+            }
+        });
+
+    private String baseUrl;
+
+    @Before
+    public void figureOutUrl() {
+        HttpServer server = rule.exposeBinding("testing", Key.get(HttpServer.class));
+        baseUrl = "http://localhost:" + server.getInternalHttpPort();
+    }
+
+    @Path("/message")
+    public static class BadResource {
+
+        private final ObjectMapper mapper;
+
+        @Inject
+        BadResource(ObjectMapper mapper) {
+            this.mapper = mapper;
+        }
+
+        @Consumes("application/json")
+        @Produces("application/json")
+        @POST
+        public String doSomething(MessageHolder something) throws Exception {
+            if ("die".equals(something.getMessage())) {
+                mapper.readTree("{\"messa");
+            }
+            return something.getMessage();
+        }
+    }
+
+    public static class MessageHolder {
+        private String message;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
+    @Inject
+    HttpClient client;
+
+    @Test
+    public void testMappingOkJson() throws Exception {
+        String result = client.post(URI.create(baseUrl + "/message"), StringContentConverter.DEFAULT_RESPONSE_HANDLER)
+                .setContentType("application/json").setContent("{\"message\": \"foo\"}").perform();
+        assertEquals("foo", result);
+    }
+
+    @Test
+    public void testMappingBadJson() throws Exception {
+        HttpClientResponse response = client.post(URI.create(baseUrl + "/message"), new CapturingHttpResponseHandler())
+                .setContentType("application/json").setContent("{\"messa").perform();
+        assertEquals(response.getStatusText(), 400, response.getStatusCode());
+    }
+
+    @Test
+    public void testMappingInternalError() throws Exception {
+        HttpClientResponse response = client.post(URI.create(baseUrl + "/message"), new CapturingHttpResponseHandler())
+                .setContentType("application/json").setContent("{\"message\": \"die\"}").perform();
+        assertEquals(response.getStatusText(), 500, response.getStatusCode());
+    }
+}
