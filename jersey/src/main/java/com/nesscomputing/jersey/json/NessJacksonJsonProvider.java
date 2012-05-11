@@ -15,12 +15,25 @@
  */
 package com.nesscomputing.jersey.json;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.Versioned;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 /**
@@ -32,5 +45,57 @@ import com.google.inject.Singleton;
 @Produces("x-ness/*")
 @Consumes("x-ness/*")
 @Singleton
-public class NessJacksonJsonProvider extends JacksonJsonProvider
-{ }
+public class NessJacksonJsonProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object>, Versioned
+{
+    private final JacksonJsonProvider delegate;
+
+    @Inject
+    NessJacksonJsonProvider(JacksonJsonProvider delegate)
+    {
+        this.delegate = delegate;
+    }
+
+    @Override
+    public Version version()
+    {
+        return delegate.version();
+    }
+
+    @Override
+    public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType)
+    {
+        return delegate.isReadable(type, genericType, annotations, mediaType);
+    }
+
+    @Override
+    public Object readFrom(Class<Object> type, Type genericType, Annotation[] annotations, MediaType mediaType,
+            MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException
+    {
+        return delegate.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
+    }
+
+    @Override
+    public long getSize(Object value, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType)
+    {
+        return delegate.getSize(value, type, genericType, annotations, mediaType);
+    }
+
+    @Override
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType)
+    {
+        return delegate.isWriteable(type, genericType, annotations, mediaType);
+    }
+
+    @Override
+    public void writeTo(Object value, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
+            MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException
+    {
+        delegate.writeTo(value, type, genericType, annotations, mediaType, httpHeaders, entityStream);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "NessJacksonJsonProvider: " + delegate.toString();
+    }
+}
