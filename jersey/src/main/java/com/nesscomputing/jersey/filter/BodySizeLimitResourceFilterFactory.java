@@ -83,16 +83,16 @@ public class BodySizeLimitResourceFilterFactory implements ResourceFilterFactory
 
         long value = annotation.value();
         if (annotation != defaultLimit) {
-            LOG.debug("Found annotation for size %d on %s", value, am);
+            LOG.trace("Found annotation for size %d on %s", value, am);
         } else {
-            LOG.debug("No annotation found, default size %d used on %s", value, am);
+            LOG.trace("No annotation found, default size %d used on %s", value, am);
         }
 
         String configKey = "ness.filter.max-body-size." + am.getResource().getResourceClass().getName();
         Integer configOverride = config.getConfiguration().getInteger(configKey, null);
 
         if (configOverride != null) {
-            LOG.debug("  ...But it was overridden to %d on the class!", configOverride);
+            LOG.trace("  ...But it was overridden to %d on the class!", configOverride);
             value = configOverride;
         }
 
@@ -100,7 +100,7 @@ public class BodySizeLimitResourceFilterFactory implements ResourceFilterFactory
         configOverride = config.getConfiguration().getInteger(configKey, null);
 
         if (configOverride != null) {
-            LOG.debug("  ...But it was overridden to %d on the method!", configOverride);
+            LOG.trace("  ...But it was overridden to %d on the method!", configOverride);
             value = configOverride;
         }
 
