@@ -113,6 +113,12 @@
       </dependency>
 
       <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-servlet</artifactId>
+        <version>${dep.jersey.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.sun.jersey.contribs</groupId>
         <artifactId>jersey-guice</artifactId>
         <version>${dep.jersey.version}</version>
