@@ -124,16 +124,28 @@ public class NessJerseyServletModule extends ServletModule
         return jerseyFeatures;
     }
 
-    public static LinkedBindingBuilder<ContainerRequestFilter> addRequestFilterBinding(Binder binder) {
-        return Multibinder.newSetBinder(binder, ContainerRequestFilter.class).addBinding();
+    /**
+     * @deprecated Use {@link NessJerseyBinder#bindRequestFilter(Binder)}.
+     */
+    @Deprecated
+    public static final LinkedBindingBuilder<ContainerRequestFilter> addRequestFilterBinding(Binder binder) {
+        return NessJerseyBinder.bindRequestFilter(binder);
     }
 
+    /**
+     * @deprecated Use {@link NessJerseyBinder#bindResponseFilter(Binder)}.
+     */
+    @Deprecated
     public static LinkedBindingBuilder<ContainerResponseFilter> addResponseFilterBinding(Binder binder) {
-        return Multibinder.newSetBinder(binder, ContainerResponseFilter.class).addBinding();
+        return NessJerseyBinder.bindResponseFilter(binder);
     }
 
+    /**
+     * @deprecated Use {@link NessJerseyBinder#bindResourceFilterFactory(Binder)}.
+     */
+    @Deprecated
     public static LinkedBindingBuilder<ResourceFilterFactory> addResourceFilterFactoryBinding(Binder binder) {
-        return Multibinder.newSetBinder(binder, ResourceFilterFactory.class).addBinding();
+        return NessJerseyBinder.bindResourceFilterFactory(binder);
     }
 
     /**
@@ -141,7 +153,7 @@ public class NessJerseyServletModule extends ServletModule
      */
     @Provides
     @Singleton
-    public JacksonJsonProvider getJacksonJsonProvider(final ObjectMapper objectMapper)
+    JacksonJsonProvider getJacksonJsonProvider(final ObjectMapper objectMapper)
     {
         final JacksonJsonProvider provider = new JacksonJsonProvider();
         provider.setMapper(objectMapper);
