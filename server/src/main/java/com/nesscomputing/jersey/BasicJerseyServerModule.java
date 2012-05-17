@@ -56,7 +56,7 @@ public class BasicJerseyServerModule extends AbstractModule {
 
         install(new SelftestModule());
 
-        NessJerseyServletModule.addResourceFilterFactoryBinding(binder()).to(BodySizeLimitResourceFilterFactory.class);
+        NessJerseyBinder.bindResourceFilterFactory(binder()).to(BodySizeLimitResourceFilterFactory.class);
 
         bind (NessJacksonJsonProvider.class);
     }

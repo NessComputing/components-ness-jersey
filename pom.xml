@@ -17,7 +17,7 @@
 
   <groupId>com.nesscomputing.components</groupId>
   <artifactId>ness-jersey-parent</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -109,6 +109,12 @@
       <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-core</artifactId>
+        <version>${dep.jersey.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-servlet</artifactId>
         <version>${dep.jersey.version}</version>
       </dependency>
 
