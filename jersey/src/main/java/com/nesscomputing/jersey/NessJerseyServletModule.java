@@ -19,23 +19,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Binder;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.binder.LinkedBindingBuilder;
-import com.google.inject.multibindings.Multibinder;
 import com.google.inject.servlet.ServletModule;
 import com.nesscomputing.config.Config;
+import com.nesscomputing.jersey.core.NessGuiceContainer;
+import com.nesscomputing.jersey.core.NessResourceConfig;
 import com.nesscomputing.jersey.exceptions.NessJerseyExceptionMapperModule;
 import com.nesscomputing.jersey.wadl.NessWadlAnnotationsConfig;
 import com.sun.jersey.api.container.filter.GZIPContentEncodingFilter;
@@ -71,53 +69,37 @@ public class NessJerseyServletModule extends ServletModule
     @Override
     protected void configureServlets()
     {
+        final JerseyConfig jerseyConfig = config.getBean(JerseyConfig.class);
+        bind(JerseyConfig.class).toInstance(jerseyConfig);
+
         install (new NessJerseyExceptionMapperModule());
 
-        bind(ExtensibleRequestFilter.class).in(Scopes.SINGLETON);
-        bind(GuiceContainer.class).in(Scopes.SINGLETON);
-        String first = paths.get(0);
-        String[] rest = paths.subList(1, paths.size()).toArray(new String[paths.size()-1]);
-        serve(first, rest).with(GuiceContainer.class, getJerseyFeatures(config));
-    }
+        bind(ResourceConfig.class).to(NessResourceConfig.class);
 
-    Map<String, String> getJerseyFeatures(final Config config)
-    {
-        // This should be in a module
-        final JerseyConfig jerseyConfig = config.getBean(JerseyConfig.class);
-
-        final List<String> requestFilters = Lists.newArrayList();
-        final List<String> responseFilters = Lists.newArrayList();
-
-        responseFilters.add(JsonUtf8ResponseFilter.class.getName());
+        NessJerseyBinder.bindResponseFilter(binder()).to(JsonUtf8ResponseFilter.class);
 
         if (jerseyConfig.isGzipEnabled()) {
-            requestFilters.add(GZIPContentEncodingFilter.class.getName());
-            responseFilters.add(GZIPContentEncodingFilter.class.getName());
+            NessJerseyBinder.bindRequestFilter(binder()).to(GZIPContentEncodingFilter.class);
+            NessJerseyBinder.bindResponseFilter(binder()).to(GZIPContentEncodingFilter.class);
         }
 
         if (jerseyConfig.isLoggingEnabled()) {
-            requestFilters.add(LoggingFilter.class.getName());
-            responseFilters.add(LoggingFilter.class.getName());
+            NessJerseyBinder.bindRequestFilter(binder()).to(LoggingFilter.class);
+            NessJerseyBinder.bindResponseFilter(binder()).to(LoggingFilter.class);
         }
 
-        requestFilters.add(ExtensibleRequestFilter.class.getName());
-        responseFilters.add(ExtensibleResponseFilter.class.getName());
+        bind(GuiceContainer.class).to(NessGuiceContainer.class).in(Scopes.SINGLETON);
+        String first = paths.get(0);
+        String[] rest = paths.subList(1, paths.size()).toArray(new String[paths.size()-1]);
+        serve(first, rest).with(GuiceContainer.class, getJerseyFeatures(jerseyConfig));
+    }
 
+    Map<String, String> getJerseyFeatures(final JerseyConfig jerseyConfig)
+    {
         final Map<String, String> jerseyFeatures = Maps.newHashMap();
         jerseyFeatures.put(ResourceConfig.FEATURE_TRACE, Boolean.toString(jerseyConfig.isTraceEnabled()));
         jerseyFeatures.put(ResourceConfig.FEATURE_TRACE_PER_REQUEST, Boolean.toString(jerseyConfig.isTracePerRequestEnabled()));
         jerseyFeatures.put(ResourceConfig.FEATURE_DISABLE_WADL, Boolean.toString(!jerseyConfig.isGenerateWadlEnabled()));
-
-        if (!responseFilters.isEmpty()) {
-            jerseyFeatures.put(ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS, StringUtils.join(responseFilters, ","));
-        }
-
-        if (!requestFilters.isEmpty()) {
-            jerseyFeatures.put(ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS,  StringUtils.join(requestFilters, ","));
-        }
-
-        jerseyFeatures.put(ResourceConfig.PROPERTY_RESOURCE_FILTER_FACTORIES, ExtensibleResourceFilterFactory.class.getName());
-
         // Expose the @RequiresAuthentication annotation
         jerseyFeatures.put(ResourceConfig.PROPERTY_WADL_GENERATOR_CONFIG, NessWadlAnnotationsConfig.class.getName());
 
