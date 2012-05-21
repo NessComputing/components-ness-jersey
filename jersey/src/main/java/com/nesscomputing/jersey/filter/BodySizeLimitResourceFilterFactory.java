@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
 
-
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.inject.Inject;
@@ -81,31 +80,26 @@ public class BodySizeLimitResourceFilterFactory implements ResourceFilterFactory
                 am.getResource().getAnnotation(BodySizeLimit.class),
                 defaultLimit);
 
-        long value = annotation.value();
-        if (annotation != defaultLimit) {
-            LOG.debug("Found annotation for size %d on %s", value, am);
-        } else {
-            LOG.debug("No annotation found, default size %d used on %s", value, am);
-        }
+        final String classConfigKey = "ness.filter.max-body-size." + am.getResource().getResourceClass().getName();
+        final Long classConfigOverride = config.getConfiguration().getLong(classConfigKey, null);
 
-        String configKey = "ness.filter.max-body-size." + am.getResource().getResourceClass().getName();
-        Integer configOverride = config.getConfiguration().getInteger(configKey, null);
+        final String methodConfigKey = classConfigKey + "." + am.getMethod().getName();
+        final Long methodConfigOverride = config.getConfiguration().getLong(methodConfigKey, null);
 
-        if (configOverride != null) {
-            LOG.debug("  ...But it was overridden to %d on the class!", configOverride);
-            value = configOverride;
-        }
-
-        configKey = configKey + "." + am.getMethod().getName();
-        configOverride = config.getConfiguration().getInteger(configKey, null);
-
-        if (configOverride != null) {
-            LOG.debug("  ...But it was overridden to %d on the method!", configOverride);
-            value = configOverride;
-        }
+        final long value = ObjectUtils.firstNonNull(methodConfigOverride, classConfigOverride, annotation.value());
 
         if (value < 0) {
-            return Collections.emptyList();
+            LOG.warn("Ignoring bad body limit %d", value);
+            return null;
+        }
+
+        if (value != annotation.value()) {
+            LOG.debug("Use configured value %d on %s", value, am);
+        }
+        else if (annotation != defaultLimit) {
+            LOG.debug("Found annotation for size %d on %s", value, am);
+        } else {
+            LOG.trace("No annotation found, default size %d used on %s", defaultLimit.value(), am);
         }
 
         return Collections.<ResourceFilter>singletonList(new Filter(value));
