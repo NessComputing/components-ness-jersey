@@ -9,7 +9,6 @@
     <version>1.1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.nesscomputing.components</groupId>
   <artifactId>ness-jersey-testing</artifactId>
   <name>ness-jersey-testing</name>
   <packaging>jar</packaging>
