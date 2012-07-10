@@ -24,6 +24,7 @@ import com.nesscomputing.jdbi.metrics.DatabaseMetricsModule;
 import com.nesscomputing.jersey.exceptions.NessJerseyExceptionMapperModule;
 import com.nesscomputing.jersey.filter.BodySizeLimitResourceFilterFactory;
 import com.nesscomputing.jersey.json.NessJacksonJsonProvider;
+import com.nesscomputing.jmx.jolokia.JolokiaModule;
 import com.nesscomputing.jmx.starter.guice.JmxStarterModule;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.yammer.metrics.guice.InstrumentationModule;
@@ -45,6 +46,8 @@ public class BasicJerseyServerModule extends AbstractModule {
     protected void configure() {
         binder().requireExplicitBindings();
         binder().disableCircularProxies();
+
+        install(new JolokiaModule());
 
         install(new JerseyServletModule());
         install(new NessJerseyServletModule(config, paths));
