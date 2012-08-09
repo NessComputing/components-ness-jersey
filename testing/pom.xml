@@ -21,6 +21,18 @@
   <dependencies>
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-config</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-lifecycle</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-jersey</artifactId>
       <scope>test</scope>
     </dependency>
@@ -28,6 +40,12 @@
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-jersey-server</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-jackson</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -46,6 +64,12 @@
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-server</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-servlet</artifactId>
       <scope>test</scope>
     </dependency>
 

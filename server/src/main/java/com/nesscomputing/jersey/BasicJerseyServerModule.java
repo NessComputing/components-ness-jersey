@@ -29,6 +29,12 @@ import com.nesscomputing.jmx.starter.guice.JmxStarterModule;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.yammer.metrics.guice.InstrumentationModule;
 
+/**
+ * Setup a basic HTTP server with Jersey and database modules.
+ *
+ * @deprecated Use the ness-server and ness-server-templates components and {@link  com.nesscomputing.server.templates.BasicNessServer}.
+ */
+@Deprecated
 public class BasicJerseyServerModule extends AbstractModule {
     private final Config config;
     private final String[] paths;

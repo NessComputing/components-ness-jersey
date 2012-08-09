@@ -25,53 +25,73 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
 import com.google.inject.Inject;
 import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.servlet.GuiceFilter;
 import com.nesscomputing.httpclient.HttpClient;
 import com.nesscomputing.httpclient.HttpClientResponse;
 import com.nesscomputing.httpclient.response.StringContentConverter;
 import com.nesscomputing.httpclient.testing.CapturingHttpResponseHandler;
 import com.nesscomputing.httpserver.HttpServer;
+import com.nesscomputing.lifecycle.junit.LifecycleRule;
+import com.nesscomputing.lifecycle.junit.LifecycleRunner;
+import com.nesscomputing.lifecycle.junit.LifecycleStatement;
 import com.nesscomputing.testing.IntegrationTestRule;
 import com.nesscomputing.testing.IntegrationTestRuleBuilder;
-import com.nesscomputing.testing.ServiceDefinition;
-import com.nesscomputing.testing.ServiceDefinitionBuilder;
 import com.nesscomputing.testing.lessio.AllowDNSResolution;
 import com.nesscomputing.testing.lessio.AllowNetworkAccess;
+import com.nesscomputing.testing.tweaked.TweakedModule;
 
 @AllowNetworkAccess(endpoints= {"127.0.0.1:*"})
 @AllowDNSResolution
-public class TestArgumentExceptionMapping {
-
-    private final ServiceDefinition testingService = new ServiceDefinitionBuilder().addModule(new AbstractModule() {
-        @Override
-        protected void configure() {
-            bind (BadResource.class);
-            install (new NessJerseyExceptionMapperModule());
-        }
-    }).build();
-
-    @Rule
-    public IntegrationTestRule rule = new IntegrationTestRuleBuilder()
-        .addService("testing", testingService).build(this, new AbstractModule() {
-            @Override
-            protected void configure() {
-                bind (BadResource.class);
-            }
-        });
+@RunWith(LifecycleRunner.class)
+public class TestArgumentExceptionMapping
+{
+    @LifecycleRule
+    public final LifecycleStatement lifecycleRule = LifecycleStatement.serviceDiscoveryLifecycle();
 
     private String baseUrl;
 
+    private final Module badResourceModule = new Module() {
+        @Override
+        public void configure(final Binder binder) {
+            binder.bind(BadResource.class);
+        }
+    };
+
+    @Rule
+    public IntegrationTestRule test = IntegrationTestRuleBuilder.defaultBuilder()
+        .addService("http", TweakedModule.forServiceModule(badResourceModule))
+        .addTestCaseModules(NessJerseyExceptionMapperModule.class, lifecycleRule.getLifecycleModule(), badResourceModule)
+        .build(this);
+
+    private GuiceFilter guiceFilter = null;
+
     @Before
-    public void figureOutUrl() {
-        HttpServer server = rule.exposeBinding("testing", Key.get(HttpServer.class));
-        baseUrl = "http://localhost:" + server.getInternalHttpPort();
+    public void setUp()
+    {
+        guiceFilter = test.exposeBinding("http", Key.get(GuiceFilter.class));
+        final HttpServer server = test.exposeBinding("http", Key.get(HttpServer.class));
+
+        baseUrl = "http://localhost:" + server.getConnectors().get("internal-http").getPort();
     }
+
+    @After
+    public void tearDown()
+    {
+        Assert.assertNotNull(guiceFilter);
+        guiceFilter.destroy();
+    }
+
 
     @Path("/message")
     public static class BadResource {
