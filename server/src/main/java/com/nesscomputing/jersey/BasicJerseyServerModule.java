@@ -32,7 +32,7 @@ import com.yammer.metrics.guice.InstrumentationModule;
 /**
  * Setup a basic HTTP server with Jersey and database modules.
  *
- * @deprecated Use the ness-server and ness-server-templates components and {@link  com.nesscomputing.server.templates.BasicNessServer}.
+ * @deprecated Use the ness-server and ness-server-templates components and {@link  com.nesscomputing.server.templates.BasicGalaxyServerModule}.
  */
 @Deprecated
 public class BasicJerseyServerModule extends AbstractModule {
