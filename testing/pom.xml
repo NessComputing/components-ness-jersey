@@ -39,7 +39,7 @@
 
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
-      <artifactId>ness-jersey-server</artifactId>
+      <artifactId>ness-server-templates</artifactId>
       <scope>test</scope>
     </dependency>
 

@@ -28,7 +28,7 @@
       <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-config</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-core</artifactId>
