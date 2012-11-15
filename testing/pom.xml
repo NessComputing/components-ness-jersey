@@ -39,12 +39,6 @@
 
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
-      <artifactId>ness-server-templates</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-jackson</artifactId>
       <scope>test</scope>
     </dependency>
@@ -64,6 +58,12 @@
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-server</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.sun.jersey.contribs</groupId>
+      <artifactId>jersey-guice</artifactId>
       <scope>test</scope>
     </dependency>
 

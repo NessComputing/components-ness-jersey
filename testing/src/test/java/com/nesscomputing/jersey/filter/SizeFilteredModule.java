@@ -17,9 +17,21 @@ package com.nesscomputing.jersey.filter;
 
 import com.google.inject.AbstractModule;
 
+import com.nesscomputing.config.Config;
+import com.nesscomputing.jersey.ServerBaseModule;
+
 public class SizeFilteredModule extends AbstractModule {
+
+    private final Config config;
+
+    public SizeFilteredModule(Config config)
+    {
+        this.config = config;
+    }
+
     @Override
     protected void configure() {
+        install (new ServerBaseModule(config));
 
         bind (SizeResource.class);
     }

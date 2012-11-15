@@ -32,16 +32,19 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.google.inject.Binder;
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceFilter;
+
+import com.nesscomputing.config.Config;
 import com.nesscomputing.httpclient.HttpClient;
 import com.nesscomputing.httpclient.HttpClientResponse;
 import com.nesscomputing.httpclient.response.StringContentConverter;
 import com.nesscomputing.httpclient.testing.CapturingHttpResponseHandler;
 import com.nesscomputing.httpserver.HttpServer;
+import com.nesscomputing.jersey.ServerBaseModule;
 import com.nesscomputing.lifecycle.junit.LifecycleRule;
 import com.nesscomputing.lifecycle.junit.LifecycleRunner;
 import com.nesscomputing.lifecycle.junit.LifecycleStatement;
@@ -61,10 +64,11 @@ public class TestArgumentExceptionMapping
 
     private String baseUrl;
 
-    private final Module badResourceModule = new Module() {
+    private final Module badResourceModule = new AbstractModule() {
         @Override
-        public void configure(final Binder binder) {
-            binder.bind(BadResource.class);
+        public void configure() {
+            install (new ServerBaseModule(Config.getEmptyConfig()));
+            bind(BadResource.class);
         }
     };
 
@@ -131,21 +135,21 @@ public class TestArgumentExceptionMapping
 
     @Test
     public void testMappingOkJson() throws Exception {
-        String result = client.post(URI.create(baseUrl + "/message"), StringContentConverter.DEFAULT_RESPONSE_HANDLER)
+        final String result = client.post(URI.create(baseUrl + "/message"), StringContentConverter.DEFAULT_RESPONSE_HANDLER)
                 .setContentType("application/json").setContent("{\"message\": \"foo\"}").perform();
         assertEquals("foo", result);
     }
 
     @Test
     public void testMappingBadJson() throws Exception {
-        HttpClientResponse response = client.post(URI.create(baseUrl + "/message"), new CapturingHttpResponseHandler())
+        final HttpClientResponse response = client.post(URI.create(baseUrl + "/message"), new CapturingHttpResponseHandler())
                 .setContentType("application/json").setContent("{\"messa").perform();
         assertEquals(response.getStatusText(), 400, response.getStatusCode());
     }
 
     @Test
     public void testMappingInternalError() throws Exception {
-        HttpClientResponse response = client.post(URI.create(baseUrl + "/message"), new CapturingHttpResponseHandler())
+        final HttpClientResponse response = client.post(URI.create(baseUrl + "/message"), new CapturingHttpResponseHandler())
                 .setContentType("application/json").setContent("{\"message\": \"die\"}").perform();
         assertEquals(response.getStatusText(), 500, response.getStatusCode());
     }

@@ -17,9 +17,21 @@ package com.nesscomputing.jersey.wadl;
 
 import com.google.inject.AbstractModule;
 
+import com.nesscomputing.config.Config;
+import com.nesscomputing.jersey.ServerBaseModule;
+
 public class WadlModule extends AbstractModule {
+
+    private final Config config;
+
+    public WadlModule(Config config)
+    {
+        this.config = config;
+    }
+
     @Override
     protected void configure() {
+        install (new ServerBaseModule(config));
         bind (FooResource.class);
     }
 }
