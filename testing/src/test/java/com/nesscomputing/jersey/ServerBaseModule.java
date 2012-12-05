@@ -16,7 +16,6 @@
 package com.nesscomputing.jersey;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 import com.sun.jersey.guice.JerseyServletModule;
 
 import com.nesscomputing.config.Config;
