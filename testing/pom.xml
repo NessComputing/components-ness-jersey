@@ -14,6 +14,20 @@
   <packaging>jar</packaging>
   <description>ness specific jersey glue code</description>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
   <properties>
     <ness.root.dir>${project.parent.basedir}</ness.root.dir>
   </properties>
