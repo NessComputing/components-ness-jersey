@@ -23,7 +23,7 @@
 
   <modules>
     <module>jersey</module>
-    <module>server</module>
+    <module>exception</module>
     <module>testing</module>
   </modules>
 
@@ -110,18 +110,24 @@
       <dependency>
         <groupId>com.nesscomputing.components</groupId>
         <artifactId>ness-httpclient</artifactId>
-        <version>1.2.1</version>
+        <version>1.4.0</version>
       </dependency>
 
       <dependency>
         <groupId>com.nesscomputing.components</groupId>
         <artifactId>ness-httpclient-testing</artifactId>
-        <version>1.2.1</version>
+        <version>1.4.0</version>
       </dependency>
 
       <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-core</artifactId>
+        <version>${dep.jersey.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-client</artifactId>
         <version>${dep.jersey.version}</version>
       </dependency>
 
