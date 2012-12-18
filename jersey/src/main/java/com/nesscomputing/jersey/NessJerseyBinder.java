@@ -43,4 +43,3 @@ public final class NessJerseyBinder
         return Multibinder.newSetBinder(binder, ResourceFilterFactory.class).addBinding();
     }
 }
-
