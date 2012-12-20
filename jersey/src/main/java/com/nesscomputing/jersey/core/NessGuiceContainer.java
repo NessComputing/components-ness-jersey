@@ -32,6 +32,7 @@ import com.sun.jersey.spi.container.servlet.WebConfig;
 @Singleton
 public class NessGuiceContainer extends GuiceContainer
 {
+    private static final long serialVersionUID = 1L;
     private final ResourceConfig resourceConfig;
 
     @Inject
