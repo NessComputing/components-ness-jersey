@@ -35,6 +35,12 @@
   <dependencies>
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-jersey</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-config</artifactId>
       <scope>test</scope>
     </dependency>
@@ -42,12 +48,6 @@
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-lifecycle</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.nesscomputing.components</groupId>
-      <artifactId>ness-jersey</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -132,7 +132,7 @@
 
     <dependency>
       <groupId>junit</groupId>
-      <artifactId>junit-dep</artifactId>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
