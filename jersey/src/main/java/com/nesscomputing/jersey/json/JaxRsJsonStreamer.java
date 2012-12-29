@@ -161,7 +161,7 @@ public class JaxRsJsonStreamer<T>
             LOG.trace("Start streaming %s", JaxRsJsonStreamer.this);
             final AtomicLong count = new AtomicLong();
             boolean success = false;
-            final JsonGenerator jg = mapper.getJsonFactory().createJsonGenerator(output);
+            final JsonGenerator jg = mapper.getFactory().createJsonGenerator(output);
 
             try {
 
