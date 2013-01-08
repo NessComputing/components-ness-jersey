@@ -24,19 +24,19 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.servlet.GuiceFilter;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.servlet.GuiceFilter;
 
 import com.nesscomputing.config.Config;
 import com.nesscomputing.httpclient.HttpClient;

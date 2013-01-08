@@ -23,12 +23,12 @@ import java.util.Set;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * API exception base class which has automatic transparency through

@@ -15,27 +15,29 @@
  */
 package com.nesscomputing.exception;
 
+import static com.nesscomputing.exception.NessApiException.DETAIL;
+import static com.nesscomputing.exception.NessApiException.ERROR_SUBTYPE;
+import static com.nesscomputing.exception.NessApiException.ERROR_TYPE;
+
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Before;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.nesscomputing.httpclient.HttpClient;
 import com.nesscomputing.httpclient.internal.HttpClientMethod;
 import com.nesscomputing.httpclient.response.Valid2xxContentConverter;
 import com.nesscomputing.httpclient.testing.TestingHttpClientBuilder;
-import static com.nesscomputing.exception.NessApiException.*;
 
 public class TestNessApiExceptionMapping
 {

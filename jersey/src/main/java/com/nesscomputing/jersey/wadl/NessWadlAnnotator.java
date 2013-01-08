@@ -18,6 +18,7 @@ package com.nesscomputing.jersey.wadl;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import javax.xml.namespace.QName;
 
@@ -60,8 +61,8 @@ public class NessWadlAnnotator implements WadlGenerator {
     }
 
     @Override
-    public Application createApplication() {
-        return delegate.createApplication();
+    public Application createApplication(UriInfo info) {
+        return delegate.createApplication(info);
     }
 
     @Override

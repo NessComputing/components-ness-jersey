@@ -29,10 +29,9 @@ import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.Versioned;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
-
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.Versioned;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 

@@ -22,6 +22,8 @@ import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
@@ -29,8 +31,6 @@ import com.google.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 
 import com.nesscomputing.httpclient.HttpClientObserver;
 import com.nesscomputing.httpclient.HttpClientResponse;

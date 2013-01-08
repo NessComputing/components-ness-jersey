@@ -17,7 +17,7 @@ package com.nesscomputing.jersey.json;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerator;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import com.nesscomputing.callback.Callback;
 import com.nesscomputing.jersey.json.JaxRsJsonStreamer.JsonEmitter;
