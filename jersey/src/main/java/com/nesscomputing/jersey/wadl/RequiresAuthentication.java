@@ -17,16 +17,19 @@ package com.nesscomputing.jersey.wadl;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Declare the annotated endpoint or resource as "public api", and put an attribute in the WADL.
  * Picked up by the frontdoor service, which will only allow outside consumers to see methods with
  * this annotation.
+ * @deprecated Use {@link PublicApi} instead.
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
 @Target({ElementType.TYPE, ElementType.METHOD})
+@WadlAnnotation({"authentication", "public"})
 public @interface RequiresAuthentication {
     public enum AuthenticationType {
         /**
