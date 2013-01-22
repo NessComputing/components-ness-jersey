@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.Response.StatusType;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Preconditions;
@@ -55,7 +55,7 @@ public abstract class NessApiException extends RuntimeException
         this.fields = ImmutableMap.copyOf(fields);
     }
 
-    public abstract Status getStatus();
+    public abstract StatusType getStatus();
 
     public String getErrorType()
     {

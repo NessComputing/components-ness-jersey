@@ -18,7 +18,7 @@ package com.nesscomputing.exception;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.Response.StatusType;
 
 import com.google.common.collect.ImmutableList;
 
@@ -28,12 +28,12 @@ class NessApiExceptionEntity
     private final String statusText;
     private final List<Object> causes;
 
-    public NessApiExceptionEntity(Status status, Object... causes)
+    public NessApiExceptionEntity(StatusType status, Object... causes)
     {
         this(status, Arrays.asList(causes));
     }
 
-    public NessApiExceptionEntity(Status status, List<Object> causes)
+    public NessApiExceptionEntity(StatusType status, List<Object> causes)
     {
         this.statusCode = status.getStatusCode();
         this.statusText = status.getReasonPhrase();
