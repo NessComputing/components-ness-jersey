@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,16 +44,17 @@ public class TestNessApiExceptionMapping
 {
 
     @Inject
+    @Named("test")
     ExceptionObserver observer;
 
     @Before
     public void setUp()
     {
-        Guice.createInjector(new NessApiExceptionModule(), new AbstractModule() {
+        Guice.createInjector(new NessApiExceptionModule("test"), new AbstractModule() {
             @Override
             protected void configure()
             {
-                NessApiExceptionBinder.registerExceptionClass(binder(), TestingException.class);
+                NessApiExceptionBinder.of(binder(), "test").registerExceptionClass(TestingException.class);
             }
         }).injectMembers(this);
     }

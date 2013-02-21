@@ -26,8 +26,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +45,6 @@ class ExceptionObserver extends HttpClientObserver
     private final ObjectMapper mapper;
     private final Map<String, Set<ExceptionReviver>> revivers;
 
-    @Inject
     ExceptionObserver(ObjectMapper mapper, Map<String, Set<ExceptionReviver>> revivers) {
         this.mapper = mapper;
         this.revivers = revivers;
