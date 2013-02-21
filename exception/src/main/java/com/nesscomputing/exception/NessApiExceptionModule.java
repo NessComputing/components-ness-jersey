@@ -15,8 +15,19 @@
  */
 package com.nesscomputing.exception;
 
+import java.lang.annotation.Annotation;
+import java.util.Map;
+import java.util.Set;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.MapBinder;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 import com.nesscomputing.httpclient.guice.HttpClientModule;
 
@@ -25,24 +36,123 @@ import com.nesscomputing.httpclient.guice.HttpClientModule;
  */
 public final class NessApiExceptionModule extends AbstractModule
 {
+    private final Annotation httpClientAnnotation;
+
+    /**
+     * @deprecated This binds for all HttpClientModules, which is a very dangerous behavior
+     * in case someone actually does not want this functionality.
+     */
+    @Deprecated
+    public NessApiExceptionModule()
+    {
+        this ( (Annotation) null);
+    }
+
+    public NessApiExceptionModule(String httpClientName)
+    {
+        this (Names.named(httpClientName));
+    }
+
+    public NessApiExceptionModule(Annotation httpClientAnnotation)
+    {
+        this.httpClientAnnotation = httpClientAnnotation;
+    }
+
     @Override
     protected void configure()
     {
-        bind (ResponseMapper.class);
+        install (new SharedNessApiExceptionModule());
 
-        HttpClientModule.bindNewObserver(binder()).to(ExceptionObserver.class);
-        MapBinder.newMapBinder(binder(), String.class, ExceptionReviver.class).permitDuplicates();
+        if (httpClientAnnotation != null) {
+            HttpClientModule.bindNewObserver(binder(), httpClientAnnotation).to(Key.get(ExceptionObserver.class, httpClientAnnotation));
+            bind (ExceptionObserver.class).annotatedWith(httpClientAnnotation).toProvider(new ExceptionObserverProvider()).in(Scopes.SINGLETON);
+        } else {
+            HttpClientModule.bindNewObserver(binder()).to(ExceptionObserver.class);
+            bind (ExceptionObserver.class).toProvider(new ExceptionObserverProvider()).in(Scopes.SINGLETON);
+        }
+
+        // Constructing the binder creates the MapBinder, so we don't have undeclared dependencies
+        // even if there end up being no bindings, just an empty map.
+        NessApiExceptionBinder.of(binder(), httpClientAnnotation);
     }
 
     @Override
     public int hashCode()
     {
-        return getClass().hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((httpClientAnnotation == null) ? 0 : httpClientAnnotation.hashCode());
+        return result;
     }
 
     @Override
     public boolean equals(Object obj)
     {
-        return obj instanceof NessApiExceptionModule;
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        NessApiExceptionModule other = (NessApiExceptionModule) obj;
+        if (httpClientAnnotation == null) {
+            if (other.httpClientAnnotation != null)
+                return false;
+        } else if (!httpClientAnnotation.equals(other.httpClientAnnotation))
+            return false;
+        return true;
+    }
+
+    class ExceptionObserverProvider implements Provider<ExceptionObserver>
+    {
+        private Injector injector;
+
+        @Inject
+        void setInjector(Injector injector)
+        {
+            this.injector = injector;
+        }
+
+        @Override
+        public ExceptionObserver get()
+        {
+            TypeLiteral<Map<String, Set<ExceptionReviver>>> type = new TypeLiteral<Map<String, Set<ExceptionReviver>>>() { };
+
+            final Key<Map<String, Set<ExceptionReviver>>> mapBindingKey;
+            if (httpClientAnnotation != null) {
+                mapBindingKey = Key.get(type, httpClientAnnotation);
+            } else {
+                mapBindingKey = Key.get(type);
+            }
+
+            ObjectMapper mapper = injector.getInstance(ObjectMapper.class);
+            Map<String, Set<ExceptionReviver>> revivers = injector.getInstance(mapBindingKey);
+
+            return new ExceptionObserver(mapper, revivers);
+        }
+    }
+
+    /**
+     * Bindings that are shared by every NessApiExceptionModule.
+     */
+    static final class SharedNessApiExceptionModule extends AbstractModule
+    {
+        @Override
+        protected void configure()
+        {
+            bind (ResponseMapper.class);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return SharedNessApiExceptionModule.class.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            return obj instanceof SharedNessApiExceptionModule;
+        }
     }
 }
