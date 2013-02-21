@@ -38,6 +38,12 @@
       <artifactId>ness-jersey</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.nesscomputing.components</groupId>
+      <artifactId>ness-jersey-exception</artifactId>
+      <scope>test</scope>
+    </dependency>
+
 
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
@@ -90,6 +96,12 @@
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
       <scope>test</scope>
     </dependency>
 

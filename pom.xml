@@ -40,7 +40,11 @@
         <artifactId>ness-jersey</artifactId>
         <version>${project.version}</version>
       </dependency>
-
+      <dependency>
+        <groupId>com.nesscomputing.components</groupId>
+        <artifactId>ness-jersey-exception</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.nesscomputing.components</groupId>
         <artifactId>ness-jersey-testing</artifactId>
@@ -104,7 +108,7 @@
       <dependency>
         <groupId>com.nesscomputing.components</groupId>
         <artifactId>ness-integration-testing</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.0-SNAPSHOT</version>
       </dependency>
 
       <dependency>
