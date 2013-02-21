@@ -54,7 +54,7 @@ public class TestNessApiExceptionMapping
             @Override
             protected void configure()
             {
-                NessApiExceptionBinder.registerExceptionClass(binder(), "test", TestingException.class);
+                NessApiExceptionBinder.of(binder(), "test").registerExceptionClass(TestingException.class);
             }
         }).injectMembers(this);
     }

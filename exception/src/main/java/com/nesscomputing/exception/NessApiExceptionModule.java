@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -38,16 +39,6 @@ public final class NessApiExceptionModule extends AbstractModule
 {
     private final Annotation httpClientAnnotation;
 
-    /**
-     * @deprecated This binds for all HttpClientModules, which is a very dangerous behavior
-     * in case someone actually does not want this functionality.
-     */
-    @Deprecated
-    public NessApiExceptionModule()
-    {
-        this ( (Annotation) null);
-    }
-
     public NessApiExceptionModule(String httpClientName)
     {
         this (Names.named(httpClientName));
@@ -55,7 +46,7 @@ public final class NessApiExceptionModule extends AbstractModule
 
     public NessApiExceptionModule(Annotation httpClientAnnotation)
     {
-        this.httpClientAnnotation = httpClientAnnotation;
+        this.httpClientAnnotation = Preconditions.checkNotNull(httpClientAnnotation, "null binding annotation");
     }
 
     @Override
@@ -63,13 +54,8 @@ public final class NessApiExceptionModule extends AbstractModule
     {
         install (new SharedNessApiExceptionModule());
 
-        if (httpClientAnnotation != null) {
-            HttpClientModule.bindNewObserver(binder(), httpClientAnnotation).to(Key.get(ExceptionObserver.class, httpClientAnnotation));
-            bind (ExceptionObserver.class).annotatedWith(httpClientAnnotation).toProvider(new ExceptionObserverProvider()).in(Scopes.SINGLETON);
-        } else {
-            HttpClientModule.bindNewObserver(binder()).to(ExceptionObserver.class);
-            bind (ExceptionObserver.class).toProvider(new ExceptionObserverProvider()).in(Scopes.SINGLETON);
-        }
+        HttpClientModule.bindNewObserver(binder(), httpClientAnnotation).to(Key.get(ExceptionObserver.class, httpClientAnnotation));
+        bind (ExceptionObserver.class).annotatedWith(httpClientAnnotation).toProvider(new ExceptionObserverProvider()).in(Scopes.SINGLETON);
 
         // Constructing the binder creates the MapBinder, so we don't have undeclared dependencies
         // even if there end up being no bindings, just an empty map.
@@ -117,13 +103,7 @@ public final class NessApiExceptionModule extends AbstractModule
         public ExceptionObserver get()
         {
             TypeLiteral<Map<String, Set<ExceptionReviver>>> type = new TypeLiteral<Map<String, Set<ExceptionReviver>>>() { };
-
-            final Key<Map<String, Set<ExceptionReviver>>> mapBindingKey;
-            if (httpClientAnnotation != null) {
-                mapBindingKey = Key.get(type, httpClientAnnotation);
-            } else {
-                mapBindingKey = Key.get(type);
-            }
+            final Key<Map<String, Set<ExceptionReviver>>> mapBindingKey = Key.get(type, httpClientAnnotation);
 
             ObjectMapper mapper = injector.getInstance(ObjectMapper.class);
             Map<String, Set<ExceptionReviver>> revivers = injector.getInstance(mapBindingKey);

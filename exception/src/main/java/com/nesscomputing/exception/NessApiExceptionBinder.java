@@ -17,6 +17,7 @@ package com.nesscomputing.exception;
 
 import java.lang.annotation.Annotation;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
@@ -28,23 +29,10 @@ public class NessApiExceptionBinder
 {
     private final MapBinder<String, ExceptionReviver> mapBinder;
 
-    /**
-     * @deprecated This uses the default HttpClientObserver binding which affects all HttpClients,
-     * a very dangerous thing.
-     */
-    @Deprecated
-    public NessApiExceptionBinder(Binder binder)
-    {
-        this(binder, null);
-    }
-
     private NessApiExceptionBinder(Binder binder, Annotation httpClientAnnotation)
     {
-        if (httpClientAnnotation == null) {
-            mapBinder = MapBinder.newMapBinder(binder, String.class, ExceptionReviver.class).permitDuplicates();
-        } else {
-            mapBinder = MapBinder.newMapBinder(binder, String.class, ExceptionReviver.class, httpClientAnnotation).permitDuplicates();
-        }
+        Preconditions.checkNotNull(httpClientAnnotation != null, "No annotation specified");
+        mapBinder = MapBinder.newMapBinder(binder, String.class, ExceptionReviver.class, httpClientAnnotation).permitDuplicates();
     }
 
     public static NessApiExceptionBinder of(Binder binder, String httpClientName)
@@ -55,26 +43,6 @@ public class NessApiExceptionBinder
     public static NessApiExceptionBinder of(Binder binder, Annotation httpClientAnnotation)
     {
         return new NessApiExceptionBinder(binder, httpClientAnnotation);
-    }
-
-    /**
-     * @deprecated This uses the default HttpClientObserver binding which affects all HttpClients,
-     * a very dangerous thing.
-     */
-    @Deprecated
-    public static void registerExceptionClass(Binder binder, Class<? extends NessApiException> klass)
-    {
-        new NessApiExceptionBinder(binder).registerExceptionClass(klass);
-    }
-
-    public static void registerExceptionClass(Binder binder, Annotation httpClientAnnotation, Class<? extends NessApiException> klass)
-    {
-        of(binder, httpClientAnnotation).registerExceptionClass(klass);
-    }
-
-    public static void registerExceptionClass(Binder binder, String httpClientName, Class<? extends NessApiException> klass)
-    {
-        of(binder, httpClientName).registerExceptionClass(klass);
     }
 
     public void registerExceptionClass(Class<? extends NessApiException> klass)
