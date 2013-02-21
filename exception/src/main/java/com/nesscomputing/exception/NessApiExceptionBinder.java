@@ -15,29 +15,39 @@
  */
 package com.nesscomputing.exception;
 
+import java.lang.annotation.Annotation;
+
+import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
 import com.google.inject.multibindings.MapBinder;
+import com.google.inject.name.Names;
 
 /**
  * Register NessApiException subclasses so they may be correctly mapped to and from HTTP responses.
  */
 public class NessApiExceptionBinder
 {
-    private final Binder binder;
+    private final MapBinder<String, ExceptionReviver> mapBinder;
 
-    public NessApiExceptionBinder(Binder binder) {
-        this.binder = binder;
+    private NessApiExceptionBinder(Binder binder, Annotation httpClientAnnotation)
+    {
+        Preconditions.checkNotNull(httpClientAnnotation != null, "No annotation specified");
+        mapBinder = MapBinder.newMapBinder(binder, String.class, ExceptionReviver.class, httpClientAnnotation).permitDuplicates();
     }
 
-    public static void registerExceptionClass(Binder binder, Class<? extends NessApiException> klass)
+    public static NessApiExceptionBinder of(Binder binder, String httpClientName)
     {
-        new NessApiExceptionBinder(binder).registerExceptionClass(klass);
+        return of(binder, Names.named(httpClientName));
+    }
+
+    public static NessApiExceptionBinder of(Binder binder, Annotation httpClientAnnotation)
+    {
+        return new NessApiExceptionBinder(binder, httpClientAnnotation);
     }
 
     public void registerExceptionClass(Class<? extends NessApiException> klass)
     {
         final ExceptionReviver predicate = new ExceptionReviver(klass);
-        MapBinder.newMapBinder(binder, String.class, ExceptionReviver.class).permitDuplicates()
-            .addBinding(predicate.getMatchedType()).toInstance(predicate);
+        mapBinder.addBinding(predicate.getMatchedType()).toInstance(predicate);
     }
 }
