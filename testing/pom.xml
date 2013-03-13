@@ -129,12 +129,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>com.nesscomputing.service.discovery</groupId>
-      <artifactId>discovery-testing</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <!-- Annotations used in the integration test builder -->
     <dependency>
       <groupId>com.nesscomputing.testing</groupId>
