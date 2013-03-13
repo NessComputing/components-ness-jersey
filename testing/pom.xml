@@ -129,6 +129,11 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+
     <!-- Annotations used in the integration test builder -->
     <dependency>
       <groupId>com.nesscomputing.testing</groupId>
