@@ -6,6 +6,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -24,7 +25,6 @@ import org.junit.runner.RunWith;
 import com.nesscomputing.config.Config;
 import com.nesscomputing.httpclient.HttpClient;
 import com.nesscomputing.httpclient.response.StringContentConverter;
-import com.nesscomputing.httpserver.HttpServer;
 import com.nesscomputing.jersey.ServerBaseModule;
 import com.nesscomputing.jersey.types.DateParam;
 import com.nesscomputing.lifecycle.junit.LifecycleRule;
@@ -41,14 +41,16 @@ import com.nesscomputing.testing.tweaked.TweakedModule;
 @RunWith(LifecycleRunner.class)
 public class DateParamTest
 {
+    private static final String DATE_TEST_SERVICE_NAME = "datetest";
+
     @LifecycleRule
     public final LifecycleStatement lifecycleRule = LifecycleStatement.serviceDiscoveryLifecycle();
 
-    private String baseUrl;
+    private UriBuilder uriBuilder;
 
     @Rule
     public IntegrationTestRule test = IntegrationTestRuleBuilder.defaultBuilder()
-        .addService("http", TweakedModule.forServiceModule(DateToLongWadlModule.class))
+        .addService(DATE_TEST_SERVICE_NAME, TweakedModule.forServiceModule(DateToLongWadlModule.class))
         .addTestCaseModules(lifecycleRule.getLifecycleModule())
         .build(this);
 
@@ -60,10 +62,8 @@ public class DateParamTest
     @Before
     public void setUp()
     {
-        guiceFilter = test.exposeBinding("http", Key.get(GuiceFilter.class));
-        final HttpServer server = test.exposeBinding("http", Key.get(HttpServer.class));
-
-        baseUrl = "http://localhost:" + server.getConnectors().get("internal-http").getPort();
+        guiceFilter = test.exposeBinding(DATE_TEST_SERVICE_NAME, Key.get(GuiceFilter.class));
+        uriBuilder = UriBuilder.fromUri(test.locateService(DATE_TEST_SERVICE_NAME)).path("/date");
     }
 
     @After
@@ -79,7 +79,7 @@ public class DateParamTest
         DateTime when = new DateTime(1000);
         assertEquals(when.getMillis(),
                 Long.parseLong(httpClient.get(
-                        baseUrl + "/datetest/date?date=" + when.getMillis(),
+                        uriBuilder.queryParam("date", when.getMillis()).build(),
                         StringContentConverter.DEFAULT_RESPONSE_HANDLER).perform()));
     }
 
@@ -89,7 +89,7 @@ public class DateParamTest
         DateTime when = new DateTime(1000);
         assertEquals(when.getMillis(),
                 Long.parseLong(httpClient.get(
-                        baseUrl + "/datetest/date?date=" + when.toString(),
+                        uriBuilder.queryParam("date", when.toString()).build(),
                         StringContentConverter.DEFAULT_RESPONSE_HANDLER).perform()));
     }
 
@@ -99,7 +99,7 @@ public class DateParamTest
         DateTime when = new DateTime(1000);
         assertEquals(when.getMillis(),
                 Long.parseLong(httpClient.get(
-                        baseUrl + "/datetest/date?date=" + when.withZone(DateTimeZone.forID("America/Los_Angeles")).toString(),
+                        uriBuilder.queryParam("date", when.withZone(DateTimeZone.forID("America/Los_Angeles")).toString()).build(),
                         StringContentConverter.DEFAULT_RESPONSE_HANDLER).perform()));
     }
 
@@ -107,7 +107,7 @@ public class DateParamTest
     public void testNull() throws Exception
     {
         assertEquals("asdf", httpClient.get(
-                        baseUrl + "/datetest/date",
+                        uriBuilder.build(),
                         StringContentConverter.DEFAULT_RESPONSE_HANDLER).perform());
     }
 
@@ -117,7 +117,7 @@ public class DateParamTest
         DateTime when = new DateTime(-1000);
         assertEquals(when.getMillis(),
                 Long.parseLong(httpClient.get(
-                        baseUrl + "/datetest/date?date=" + when.getMillis(),
+                        uriBuilder.queryParam("date", when.getMillis()).build(),
                         StringContentConverter.DEFAULT_RESPONSE_HANDLER).perform()));
     }
 
@@ -136,7 +136,7 @@ public class DateParamTest
         }
     }
 
-    @Path("/datetest/date")
+    @Path("/date")
     @Produces(MediaType.TEXT_PLAIN)
     public static class DateToLongResource
     {
