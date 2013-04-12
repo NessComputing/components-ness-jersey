@@ -13,12 +13,12 @@
     <connection>scm:git:git://github.com/NessComputing/components-ness-jersey.git</connection>
     <developerConnection>scm:git:git@github.com:NessComputing/components-ness-jersey.git</developerConnection>
     <url>http://github.com/NessComputing/components-ness-jersey</url>
-    <tag>ness-jersey-parent-1.8.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <groupId>com.nesscomputing.components</groupId>
   <artifactId>ness-jersey-parent</artifactId>
-  <version>1.8.1</version>
+  <version>1.8.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
