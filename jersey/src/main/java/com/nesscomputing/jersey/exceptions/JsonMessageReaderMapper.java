@@ -16,6 +16,7 @@
 package com.nesscomputing.jersey.exceptions;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,8 +24,10 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.jaxrs.base.ProviderBase;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -32,6 +35,8 @@ import org.apache.log4j.MDC;
 
 @Provider
 public class JsonMessageReaderMapper extends NessJerseyExceptionMapper<JsonParseException> {
+
+    private static final Set<String> CLASS_NAMES = ImmutableSet.of(JacksonJsonProvider.class.getName(), ProviderBase.class.getName());
 
     @Inject
     public JsonMessageReaderMapper() {
@@ -41,7 +46,7 @@ public class JsonMessageReaderMapper extends NessJerseyExceptionMapper<JsonParse
     @Override
     public Response toResponse(JsonParseException exception) {
         for (StackTraceElement e : exception.getStackTrace()) {
-            if (JacksonJsonProvider.class.getName().equals(e.getClassName())) {
+            if (CLASS_NAMES.contains(e.getClassName())) {
                 final Map<String, String> response = ImmutableMap.of(
                         "code", "400",
                         "trace", ObjectUtils.toString(MDC.get("track")),
