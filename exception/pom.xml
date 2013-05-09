@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.nesscomputing.components</groupId>
     <artifactId>ness-jersey-parent</artifactId>
-    <version>1.8.3-SNAPSHOT</version>
+    <version>1.8.3</version>
   </parent>
 
   <artifactId>ness-jersey-exception</artifactId>
