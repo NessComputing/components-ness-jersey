@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.nesscomputing.components</groupId>
     <artifactId>ness-jersey-parent</artifactId>
-    <version>1.8.4-SNAPSHOT</version>
+    <version>1.9.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>ness-jersey-testing</artifactId>
