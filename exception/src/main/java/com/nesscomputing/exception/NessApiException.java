@@ -77,7 +77,7 @@ public abstract class NessApiException extends RuntimeException
         return getValue(DETAIL);
     }
 
-    private String getValue(String field)
+    protected String getValue(String field)
     {
         return ObjectUtils.toString(fields.get(field), null);
     }
