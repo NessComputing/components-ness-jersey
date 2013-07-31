@@ -16,7 +16,6 @@
 package com.nesscomputing.jersey.filter;
 
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
@@ -69,21 +68,6 @@ public class BodySizeLimitResourceFilterFactory implements ResourceFilterFactory
         defaultSizeLimit = filterConfig.getMaxBodySize();
 
     }
-
-    private final BodySizeLimit defaultLimit = new BodySizeLimit() {
-        @Override
-        public long value() {
-            return defaultSizeLimit;
-        }
-        @Override
-        public Class<? extends Annotation> annotationType() {
-            return BodySizeLimit.class;
-        }
-        @Override
-        public String toString() {
-            return "not present, defaulting";
-        }
-    };
 
     @Override
     public List<ResourceFilter> create(AbstractMethod am)
