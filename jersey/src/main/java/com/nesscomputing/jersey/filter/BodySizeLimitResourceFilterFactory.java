@@ -17,22 +17,30 @@ package com.nesscomputing.jersey.filter;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.commons.lang3.ObjectUtils;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.nesscomputing.config.Config;
-import com.nesscomputing.jersey.util.MaxSizeInputStream;
-import com.nesscomputing.logging.Log;
 import com.sun.jersey.api.model.AbstractMethod;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 import com.sun.jersey.spi.container.ContainerResponseFilter;
 import com.sun.jersey.spi.container.ResourceFilter;
 import com.sun.jersey.spi.container.ResourceFilterFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import org.apache.commons.configuration.AbstractConfiguration;
+import org.apache.commons.lang3.ObjectUtils;
+
+import com.nesscomputing.config.Config;
+import com.nesscomputing.jersey.util.MaxSizeInputStream;
+import com.nesscomputing.logging.Log;
 
 /**
  * A {@link ResourceFilterFactory} which discovers all resource methods.  If they take
@@ -71,38 +79,59 @@ public class BodySizeLimitResourceFilterFactory implements ResourceFilterFactory
         public Class<? extends Annotation> annotationType() {
             return BodySizeLimit.class;
         }
+        @Override
+        public String toString() {
+            return "not present, defaulting";
+        }
     };
 
     @Override
-    public List<ResourceFilter> create(AbstractMethod am) {
+    public List<ResourceFilter> create(AbstractMethod am)
+    {
         BodySizeLimit annotation = ObjectUtils.firstNonNull(
                 am.getAnnotation(BodySizeLimit.class),
-                am.getResource().getAnnotation(BodySizeLimit.class),
-                defaultLimit);
+                am.getResource().getAnnotation(BodySizeLimit.class));
 
-        final String classConfigKey = "ness.filter.max-body-size." + am.getResource().getResourceClass().getName();
-        final Long classConfigOverride = config.getConfiguration().getLong(classConfigKey, null);
+        final AbstractConfiguration ac = config.getConfiguration();
+        final Method realMethod = am.getMethod();
+        Class<?> resourceClass = am.getResource().getResourceClass();
+        Map<String, Long> foundValues = Maps.newLinkedHashMap();
+        do {
+            final String classConfigKey = "ness.filter.max-body-size." + resourceClass.getName();
+            try {
+                resourceClass.getMethod(realMethod.getName(), realMethod.getParameterTypes());
+            } catch (NoSuchMethodException | SecurityException e) {
+                LOG.trace(e);
+                continue;
+            }
+            final String methodKey = classConfigKey + "." + realMethod.getName();
+            foundValues.put(methodKey, ac.getLong(methodKey, null));
+            foundValues.put(classConfigKey, ac.getLong(classConfigKey, null));
+        } while ((resourceClass = resourceClass.getSuperclass()) != null);
 
-        final String methodConfigKey = classConfigKey + "." + am.getMethod().getName();
-        final Long methodConfigOverride = config.getConfiguration().getLong(methodConfigKey, null);
+        if (annotation != null) {
+            foundValues.put("annotation " + annotation, annotation.value());
+        }
+        foundValues.put("default", defaultSizeLimit);
 
-        final long value = ObjectUtils.firstNonNull(methodConfigOverride, classConfigOverride, annotation.value());
+        for (Entry<String, Long> e : foundValues.entrySet()) {
+            if (e.getValue() == null) {
+                continue;
+            }
+            final long value = e.getValue();
 
-        if (value < 0) {
-            LOG.warn("Ignoring bad body limit %d", value);
-            return null;
+            String message = "[%s] => %s";
+            Object[] args = {Joiner.on("], [").withKeyValueSeparator(" = ").useForNull("null").join(foundValues), value};
+
+            if (value != defaultSizeLimit || annotation != null) {
+                LOG.debug(message, args);
+            } else {
+                LOG.trace(message, args);
+            }
+            return Collections.<ResourceFilter>singletonList(new Filter(value));
         }
 
-        if (value != annotation.value()) {
-            LOG.debug("Use configured value %d on %s", value, am);
-        }
-        else if (annotation != defaultLimit) {
-            LOG.debug("Found annotation for size %d on %s", value, am);
-        } else {
-            LOG.trace("No annotation found, default size %d used on %s", defaultLimit.value(), am);
-        }
-
-        return Collections.<ResourceFilter>singletonList(new Filter(value));
+        throw new IllegalStateException("No value found for " + am + ": " + foundValues);
     }
 
     private static class Filter implements ResourceFilter, ContainerRequestFilter {
