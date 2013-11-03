@@ -29,10 +29,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 
-import org.apache.commons.lang3.time.StopWatch;
-
 import com.nesscomputing.callback.Callback;
 import com.nesscomputing.logging.Log;
+
+import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * A configurable JAX-RS Json output streamer.  Allows customization of the header, footer, and how
@@ -43,6 +43,7 @@ public class JaxRsJsonStreamer<T>
     private static final Log LOG = Log.findLog();
 
     private final ObjectMapper mapper;
+    @SuppressWarnings("PMD.UnusedPrivateField")
     private final TypeReference<T> type;
     private final Callback<JsonGenerator> header;
     private final Callback<JsonGenerator> footer;
@@ -178,10 +179,10 @@ public class JaxRsJsonStreamer<T>
                 footer.call(jg);
 
                 success = true;
-            } catch (final WebApplicationException | IOException e) {
-                throw e;
-            } catch (final Exception e) {
-                throw Throwables.propagate(e);
+            } catch (final Throwable t) {
+                Throwables.propagateIfInstanceOf(t, WebApplicationException.class);
+                Throwables.propagateIfInstanceOf(t, IOException.class);
+                throw Throwables.propagate(t);
             } finally {
                 if (success) {
                     LOG.trace("Succeeded streaming %d results in %dms for %s", count.get(), sw.getTime(), JaxRsJsonStreamer.this);

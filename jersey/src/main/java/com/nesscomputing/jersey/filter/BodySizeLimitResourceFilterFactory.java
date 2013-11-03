@@ -99,20 +99,20 @@ public class BodySizeLimitResourceFilterFactory implements ResourceFilterFactory
         foundValues.put("default", defaultSizeLimit);
 
         for (Entry<String, Long> e : foundValues.entrySet()) {
-            if (e.getValue() == null) {
-                continue;
-            }
-            final long value = e.getValue();
+            final Long value = e.getValue();
+            if (value != null) {
 
-            String message = "[%s] => %s";
-            Object[] args = {Joiner.on("], [").withKeyValueSeparator(" = ").useForNull("null").join(foundValues), value};
+                String message = "[%s] => %s";
+                Object[] args = {Joiner.on("], [").withKeyValueSeparator(" = ").useForNull("null").join(foundValues), value};
 
-            if (value != defaultSizeLimit || annotation != null) {
-                LOG.debug(message, args);
-            } else {
-                LOG.trace(message, args);
+                if (value != defaultSizeLimit || annotation != null) {
+                    LOG.debug(message, args);
+                } else {
+                    LOG.trace(message, args);
+                }
+
+                return Collections.<ResourceFilter>singletonList(new Filter(value));
             }
-            return Collections.<ResourceFilter>singletonList(new Filter(value));
         }
 
         throw new IllegalStateException("No value found for " + am + ": " + foundValues);

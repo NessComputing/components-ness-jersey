@@ -19,9 +19,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 import com.google.common.base.Preconditions;
-import com.google.common.io.LimitInputStream;
 import com.nesscomputing.jersey.exceptions.ExcessivelySizedHttpBodyException;
 
 /**

@@ -25,7 +25,7 @@ import com.google.inject.name.Names;
 /**
  * Register NessApiException subclasses so they may be correctly mapped to and from HTTP responses.
  */
-public class NessApiExceptionBinder
+public final class NessApiExceptionBinder
 {
     private final MapBinder<String, ExceptionReviver> mapBinder;
 
