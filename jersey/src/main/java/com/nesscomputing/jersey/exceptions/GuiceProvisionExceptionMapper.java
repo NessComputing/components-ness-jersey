@@ -145,10 +145,11 @@ public class GuiceProvisionExceptionMapper implements ExceptionMapper<ProvisionE
 
     private int distance(Class<?> c, Class<?> emtc)
     {
-        int distance = 0;
         if (!emtc.isAssignableFrom(c)) {
             return Integer.MAX_VALUE;
         }
+
+        int distance = 0;
         while (c != emtc) {
             c = c.getSuperclass();
             distance++;

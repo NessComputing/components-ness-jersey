@@ -39,12 +39,12 @@ public final class NessApiExceptionModule extends AbstractModule
 {
     private final Annotation httpClientAnnotation;
 
-    public NessApiExceptionModule(String httpClientName)
+    public NessApiExceptionModule(final String httpClientName)
     {
-        this (Names.named(httpClientName));
+        this(Names.named(httpClientName));
     }
 
-    public NessApiExceptionModule(Annotation httpClientAnnotation)
+    public NessApiExceptionModule(final Annotation httpClientAnnotation)
     {
         this.httpClientAnnotation = Preconditions.checkNotNull(httpClientAnnotation, "null binding annotation");
     }
@@ -52,10 +52,10 @@ public final class NessApiExceptionModule extends AbstractModule
     @Override
     protected void configure()
     {
-        install (new SharedNessApiExceptionModule());
+        install(new SharedNessApiExceptionModule());
 
         HttpClientModule.bindNewObserver(binder(), httpClientAnnotation).to(Key.get(ExceptionObserver.class, httpClientAnnotation));
-        bind (ExceptionObserver.class).annotatedWith(httpClientAnnotation).toProvider(new ExceptionObserverProvider()).in(Scopes.SINGLETON);
+        bind(ExceptionObserver.class).annotatedWith(httpClientAnnotation).toProvider(new ExceptionObserverProvider()).in(Scopes.SINGLETON);
 
         // Constructing the binder creates the MapBinder, so we don't have undeclared dependencies
         // even if there end up being no bindings, just an empty map.
@@ -67,25 +67,31 @@ public final class NessApiExceptionModule extends AbstractModule
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((httpClientAnnotation == null) ? 0 : httpClientAnnotation.hashCode());
+        result = prime * result + (httpClientAnnotation == null ? 0 : httpClientAnnotation.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        NessApiExceptionModule other = (NessApiExceptionModule) obj;
+        }
+        final NessApiExceptionModule other = (NessApiExceptionModule) obj;
         if (httpClientAnnotation == null) {
-            if (other.httpClientAnnotation != null)
+            if (other.httpClientAnnotation != null) {
                 return false;
-        } else if (!httpClientAnnotation.equals(other.httpClientAnnotation))
+            }
+        }
+        else if (!httpClientAnnotation.equals(other.httpClientAnnotation)) {
             return false;
+        }
         return true;
     }
 
@@ -94,7 +100,7 @@ public final class NessApiExceptionModule extends AbstractModule
         private Injector injector;
 
         @Inject
-        void setInjector(Injector injector)
+        void setInjector(final Injector injector)
         {
             this.injector = injector;
         }
@@ -102,11 +108,11 @@ public final class NessApiExceptionModule extends AbstractModule
         @Override
         public ExceptionObserver get()
         {
-            TypeLiteral<Map<String, Set<ExceptionReviver>>> type = new TypeLiteral<Map<String, Set<ExceptionReviver>>>() { };
+            final TypeLiteral<Map<String, Set<ExceptionReviver>>> type = new TypeLiteral<Map<String, Set<ExceptionReviver>>>() {};
             final Key<Map<String, Set<ExceptionReviver>>> mapBindingKey = Key.get(type, httpClientAnnotation);
 
-            ObjectMapper mapper = injector.getInstance(ObjectMapper.class);
-            Map<String, Set<ExceptionReviver>> revivers = injector.getInstance(mapBindingKey);
+            final ObjectMapper mapper = injector.getInstance(ObjectMapper.class);
+            final Map<String, Set<ExceptionReviver>> revivers = injector.getInstance(mapBindingKey);
 
             return new ExceptionObserver(mapper, revivers);
         }
@@ -120,7 +126,7 @@ public final class NessApiExceptionModule extends AbstractModule
         @Override
         protected void configure()
         {
-            bind (ResponseMapper.class);
+            bind(ResponseMapper.class);
         }
 
         @Override
@@ -130,7 +136,7 @@ public final class NessApiExceptionModule extends AbstractModule
         }
 
         @Override
-        public boolean equals(Object obj)
+        public boolean equals(final Object obj)
         {
             return obj instanceof SharedNessApiExceptionModule;
         }
