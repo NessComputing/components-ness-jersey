@@ -118,4 +118,10 @@ abstract class DelegatingWadlGenerator implements WadlGenerator
     {
         delegate.attachTypes(description);
     }
+
+    // Don't @Override this, therefore will still build with older versions.
+    public void setEnvironment(Environment env)
+    {
+        delegate.setEnvironment(env);
+    }
 }
